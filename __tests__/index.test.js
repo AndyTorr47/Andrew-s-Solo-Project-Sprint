@@ -36,3 +36,37 @@ describe(`Error handling tests`, () => {
       });
   });
 });
+
+describe("GET /api/articles tests", () => {
+  test("/api/articles, returns an array of objects from the given properties ", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles);
+        articles.forEach((article) =>
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            })
+          )
+        );
+
+        expect(articles.length).toBe(12);
+      });
+  });
+  test("should return a 404 not found if the article_id does not exist", () => {
+    return request(app)
+      .get(`/api/articles/135983`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route not found");
+      });
+  });
+});

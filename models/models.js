@@ -5,3 +5,9 @@ exports.selectTopics = () => {
     return result.rows;
   });
 };
+
+exports.selectArticles = () => {
+  return db.query(`SELECT * FROM articles`).then((result) => {
+    return result.rows;
+  });
+};
