@@ -132,11 +132,11 @@ describe(`GET /api/users tests`, () => {
               })
             )
           );
+          console.log(users);
+          expect(users.length).toBe(4);
         });
     });
   });
 });
 
 // GET /api/articles/comment_count
-
-console.log(data);
