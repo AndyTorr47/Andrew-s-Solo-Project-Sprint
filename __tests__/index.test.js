@@ -193,12 +193,12 @@ describe(`GET /api/articles/:article_id/comments tests`, () => {
               })
             )
           );
-          //expect(comments.length).toBe(11);
+          expect(comments.length).toBe(11);
         });
     });
   });
   //5
-  test(`400 - No article with ID 666`, () => {
+  test(`404 - No article with ID 666`, () => {
     return request(app)
       .get(`/api/articles/666/comments`)
       .expect(404)
