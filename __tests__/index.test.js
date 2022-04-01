@@ -133,6 +133,8 @@ describe(`GET /api/users tests`, () => {
               })
             )
           );
+          console.log(users);
+          expect(users.length).toBe(4);
         });
     });
   });
@@ -215,3 +217,4 @@ describe(`GET /api/articles/:article_id/comments tests`, () => {
       });
   });
 });
+// GET /api/articles/comment_count

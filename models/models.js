@@ -30,7 +30,8 @@ exports.selectArticles = () => {
 exports.patchArticle = (article_id, inc_votes) => {
   return db
     .query(
-      `UPDATE articles SET votes = votes + ${inc_votes} WHERE article_id = ${article_id} RETURNING *;`
+      `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
+      [inc_votes, article_id]
     )
     .then((result) => {
       if (!result.rows.length) {
@@ -77,7 +78,7 @@ exports.selectArticleComments = (article_id) => {
   return db
     .query(
       `SELECT comment_id, votes, created_at, author, body FROM comments
-    WHERE article_id = $1`,
+    WHERE article_id = $1;`,
       [article_id]
     )
     .then(({ rows }) => {
