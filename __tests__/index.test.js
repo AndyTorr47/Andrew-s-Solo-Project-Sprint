@@ -4,8 +4,10 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 
-beforeEach(() => seed(data));
-afterAll(() => db.end);
+beforeEach(() => {
+  return seed(data);
+});
+afterAll(() => db.end());
 
 //GET /api/topics
 
@@ -36,16 +38,16 @@ describe("/api/topics tests", () => {
   });
 });
 
-//GET /api/articles/:article_id
-
+//GET /api/articles
+//1,2
 describe("GET /api/articles tests", () => {
-  test("/api/articles, returns an array of objects from the given properties ", () => {
+  it("/api/articles, returns an array of objects from the given properties, in desc order, with comment count refactored", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        expect(articles);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) =>
           expect(article).toEqual(
             expect.objectContaining({
@@ -55,11 +57,10 @@ describe("GET /api/articles tests", () => {
               topic: expect.any(String),
               created_at: expect.any(String),
               votes: expect.any(Number),
+              comment_count: expect.any(Number),
             })
           )
         );
-
-        expect(articles.length).toBe(12);
       });
   });
   test("should return a 404 not found if the article_id does not exist", () => {
@@ -67,7 +68,7 @@ describe("GET /api/articles tests", () => {
       .get(`/api/articles/135983`)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Route not found");
+        expect(body.msg).toBe("Article not found");
       });
   });
 });
@@ -139,4 +140,81 @@ describe(`GET /api/users tests`, () => {
   });
 });
 
+// GET /api/articles/:article_id/comment_count
+
+describe(`GET /api/articles/:article_id tests`, () => {
+  describe(`GET tests`, () => {
+    test(`/api/articles/:article_id, returns an array with single object, has been refactored to include comment count`, () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+          const { article } = body;
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: 1,
+              title: "Living in the shadow of a great man",
+              topic: "mitch",
+              author: "butter_bridge",
+              body: "I find this existence challenging",
+              created_at: "2020-07-09T20:11:00.000Z",
+              votes: 100,
+              comment_count: 18,
+            })
+          );
+        });
+    });
+  });
+
+  test(`400 - No article with ID 666`, () => {
+    return request(app)
+      .get(`/api/articles/666`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Article not found`);
+      });
+  });
+});
+
+describe(`GET /api/articles/:article_id/comments tests`, () => {
+  describe(`GET tests`, () => {
+    test(`/api/articles/:article_id/comments, returns an array with single object`, () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          const { comments } = body;
+          comments.forEach((comment) =>
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+              })
+            )
+          );
+          expect(comments.length).toBe(11);
+        });
+    });
+  });
+  //5
+  test(`404 - No article with ID 666`, () => {
+    return request(app)
+      .get(`/api/articles/666/comments`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Comments not found`);
+      });
+  });
+  test(`400 - ID must be a number`, () => {
+    return request(app)
+      .get(`/api/articles/banana/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Invalid input`);
+      });
+  });
+});
 // GET /api/articles/comment_count
