@@ -26,9 +26,6 @@ describe("/api/topics tests", () => {
         );
       });
   });
-});
-
-describe(`Error handling tests`, () => {
   test(`404 - Path not found for /api/topic`, () => {
     return request(app)
       .get("/api/topi")
@@ -39,7 +36,7 @@ describe(`Error handling tests`, () => {
   });
 });
 
-//GET /api/articles
+//GET /api/articles/:article_id
 
 describe("GET /api/articles tests", () => {
   test("/api/articles, returns an array of objects from the given properties ", () => {
@@ -117,3 +114,29 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+
+// GET /api/users
+
+describe(`GET /api/users tests`, () => {
+  describe(`GET tests`, () => {
+    test(`/api/users, returns an array of objects`, () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body }) => {
+          const { users } = body;
+          users.forEach((user) =>
+            expect(user).toEqual(
+              expect.objectContaining({
+                username: expect.any(String),
+              })
+            )
+          );
+          console.log(users);
+          expect(users.length).toBe(4);
+        });
+    });
+  });
+});
+
+// GET /api/articles/comment_count
