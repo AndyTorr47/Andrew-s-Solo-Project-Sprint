@@ -83,6 +83,15 @@ describe("GET /api/articles tests", () => {
       });
   });
 
+  it("should return a 400 bad request if not given inc_votes as the correct data type", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=votes`)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+
   test("should return a 404 not found if the article_id does not exist", () => {
     return request(app)
       .get(`/api/articles/135983`)
