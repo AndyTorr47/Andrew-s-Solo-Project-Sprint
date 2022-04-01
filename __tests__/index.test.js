@@ -7,6 +7,8 @@ const data = require("../db/data/test-data/index");
 beforeEach(() => seed(data));
 afterAll(() => db.end);
 
+//GET /api/topics
+
 describe("/api/topics tests", () => {
   test("/api/topics, returns an array of objects", () => {
     return request(app)
@@ -36,6 +38,8 @@ describe(`Error handling tests`, () => {
       });
   });
 });
+
+//GET /api/articles
 
 describe("GET /api/articles tests", () => {
   test("/api/articles, returns an array of objects from the given properties ", () => {
@@ -67,6 +71,49 @@ describe("GET /api/articles tests", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Route not found");
+      });
+  });
+});
+
+//PATCH /api/articles/:article_id
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("should return a 404 not found if the article_id does not exist", () => {
+    return request(app)
+      .patch(`/api/articles/112358`)
+      .send({ inc_votes: 1 })
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Route not found");
+      });
+  });
+
+  test("should return a 400 bad request if not given inc_votes", () => {
+    return request(app)
+      .patch(`/api/articles/3`)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("inc_votes is required");
+      });
+  });
+
+  test("should return a 201 and the updated article if exists and valid data is passed", () => {
+    return request(app)
+      .patch(`/api/articles/3`)
+      .send({ inc_votes: 3 })
+      .expect(201)
+      .then((res) => {
+        expect(res.body.article).toBeInstanceOf(Object);
+        expect(res.body.article).toMatchObject({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+        });
+        expect(res.body.article.votes).toBe(3);
       });
   });
 });

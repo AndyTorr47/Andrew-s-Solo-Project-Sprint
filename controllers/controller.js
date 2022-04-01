@@ -1,4 +1,8 @@
-const { selectTopics, selectArticles } = require("../models/models");
+const {
+  selectTopics,
+  selectArticles,
+  patchArticle,
+} = require("../models/models");
 
 exports.getTopics = (req, res, next) => {
   selectTopics()
@@ -12,6 +16,20 @@ exports.getArticles = (req, res, next) => {
   selectArticles()
     .then((articles) => {
       res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.updateArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  if (inc_votes === undefined) {
+    return next({ status: 400, msg: "inc_votes is required" });
+  }
+
+  patchArticle(article_id, inc_votes)
+    .then((article) => {
+      res.status(201).send({ article });
     })
     .catch(next);
 };
