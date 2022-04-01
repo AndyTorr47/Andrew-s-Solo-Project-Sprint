@@ -47,7 +47,6 @@ describe("GET /api/articles tests", () => {
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
-        expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) =>
           expect(article).toEqual(
             expect.objectContaining({
@@ -63,6 +62,27 @@ describe("GET /api/articles tests", () => {
         );
       });
   });
+
+  it("should return a default sort_by = created_at in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+
+  it("should be able to add a custom sort_by", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=votes`)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+
   test("should return a 404 not found if the article_id does not exist", () => {
     return request(app)
       .get(`/api/articles/135983`)

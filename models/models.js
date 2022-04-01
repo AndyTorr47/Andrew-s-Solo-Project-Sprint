@@ -7,7 +7,7 @@ exports.selectTopics = () => {
   });
 };
 
-exports.selectArticles = () => {
+exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
   return db
     .query(
       `    SELECT  A.author,
@@ -20,7 +20,7 @@ exports.selectArticles = () => {
                     FROM    articles A
                     LEFT JOIN comments B ON A.article_id=A.article_id
                     GROUP BY A.article_id
-                     ORDER BY created_at DESC;`
+                     ORDER BY ${sort_by} ${order};`
     )
     .then((result) => {
       return result.rows;
