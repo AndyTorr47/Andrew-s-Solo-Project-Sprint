@@ -3,6 +3,7 @@ const app = require("../app");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
+const endpointJSON = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(data);
@@ -258,7 +259,7 @@ describe("GET /api/articles(queries)", () => {
   });
 });
 
-// POST
+// POST comments
 
 describe("POST /api/articles/:article_id/comments", () => {
   test("post a comment into specific article", () => {
@@ -286,6 +287,8 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
+//DELETE comments
+
 describe("DELETE /api/comments/:comment_id", () => {
   test("delete comment by ID", () => {
     return request(app).delete("/api/comments/1").expect(204);
@@ -295,8 +298,26 @@ describe("DELETE /api/comments/:comment_id", () => {
       .delete("/api/comments/fsd")
       .expect(400)
       .then((result) => {
-        console.log(result);
         expect(result.body.msg).toBe("Invalid input");
+      });
+  });
+  test("return 404 when id is valid but does not exist", () => {
+    return request(app)
+      .delete("/api/comments/999")
+      .expect(404)
+      .then((result) => {
+        expect(result.body.msg).toBe("id not found!");
+      });
+  });
+});
+
+describe("GET /api", () => {
+  test(" endpoint JSON to return all the endpoints avaialable", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((result) => {
+        expect(result.body).toEqual(endpointJSON);
       });
   });
 });
