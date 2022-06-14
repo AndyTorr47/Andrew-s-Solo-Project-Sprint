@@ -63,35 +63,6 @@ describe("GET /api/articles tests", () => {
       });
   });
 
-  it("should return a default sort_by = created_at in descending order", () => {
-    return request(app)
-      .get("/api/articles")
-      .expect(200)
-      .then((res) => {
-        expect(res.body.articles).toBeSortedBy("created_at", {
-          descending: true,
-        });
-      });
-  });
-
-  it("should be able to add a custom sort_by", () => {
-    return request(app)
-      .get(`/api/articles?sort_by=votes`)
-      .expect(200)
-      .then((res) => {
-        expect(res.body.articles).toBeSortedBy("votes", { descending: true });
-      });
-  });
-
-  it("should return a 400 bad request if not given inc_votes as the correct data type", () => {
-    return request(app)
-      .get(`/api/articles?sort_by=votes`)
-      .expect(200)
-      .then((res) => {
-        expect(res.body.articles).toBeSortedBy("votes", { descending: true });
-      });
-  });
-
   test("should return a 404 not found if the article_id does not exist", () => {
     return request(app)
       .get(`/api/articles/135983`)
@@ -162,7 +133,7 @@ describe(`GET /api/users tests`, () => {
               })
             )
           );
-          console.log(users);
+
           expect(users.length).toBe(4);
         });
     });
@@ -246,4 +217,86 @@ describe(`GET /api/articles/:article_id/comments tests`, () => {
       });
   });
 });
-// GET /api/articles/comment_count
+// GET /api/articles (queries)
+
+describe("GET /api/articles(queries)", () => {
+  it("should return a default sort_by = created_at in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+
+  it("should be able to add a custom sort_by", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=votes`)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+
+  it("should return a 400 bad request if not given inc_votes as the correct data type", () => {
+    return request(app)
+      .get(`/api/articles?sort_by=votes`)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).toBeSortedBy("votes", { descending: true });
+      });
+  });
+  test("return 404 when endpoint is not correct", () => {
+    return request(app)
+      .get("/api/arltsd")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Route not found");
+      });
+  });
+});
+
+// POST
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("post a comment into specific article", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "butter_bridge", body: "test comment" })
+      .expect(201)
+      .then((result) => {
+        expect(result.body).toMatchObject({
+          username: "butter_bridge",
+          body: "test comment",
+        });
+      });
+  });
+  test("return 400 when the comment only has white spaces", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "rogersop", body: " " })
+      .expect(400)
+      .then((result) => {
+        expect(result.body.msg).toBe(
+          "can not post a comment with only white spaces"
+        );
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("delete comment by ID", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("return 400 when comment does not exist", () => {
+    return request(app)
+      .delete("/api/comments/fsd")
+      .expect(400)
+      .then((result) => {
+        console.log(result);
+        expect(result.body.msg).toBe("Invalid input");
+      });
+  });
+});
