@@ -6,6 +6,8 @@ const {
   getArticleComments,
   updateArticleById,
   getUsers,
+  postComment,
+  deleteComment,
 } = require("./controllers/controller");
 
 const {
@@ -26,6 +28,10 @@ app.get(`/api/articles/:article_id`, getArticle);
 app.get(`/api/articles/:article_id/comments`, getArticleComments);
 
 app.patch("/api/articles/:article_id", updateArticleById);
+
+app.post("/api/articles/:article_id/comments", postComment);
+
+app.delete("/api/comments/:comment_id", deleteComment);
 
 //error handling
 app.use(handleCustomErrors);

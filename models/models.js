@@ -7,7 +7,7 @@ exports.selectTopics = () => {
   });
 };
 
-exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
+exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
   return db
     .query(
       `    SELECT  A.author,
@@ -89,4 +89,35 @@ exports.selectArticleComments = (article_id) => {
         });
       } else return rows;
     });
+};
+
+exports.theComment = (article_id, username, comment) => {
+  let query = ` 
+        INSERT INTO comments
+        (article_id, author, body)
+        VALUES ($1, $2, $3) RETURNING author AS username, body;
+    `;
+
+  return db.query(query, [article_id, username, comment]).then((result) => {
+    //when body only contains white spaces
+    if (comment.length >= 0 && !comment.match(/\w/gi)) {
+      return Promise.reject({
+        status: 400,
+        msg: "can not post a comment with only white spaces",
+      });
+    }
+
+    return result.rows[0];
+  });
+};
+
+exports.deleteCommentById = (comment_id) => {
+  let query = ` 
+        DELETE FROM comments
+        WHERE comment_id = $1
+    `;
+
+  return db.query(query, [comment_id]).then((result) => {
+    return result.rows;
+  });
 };
