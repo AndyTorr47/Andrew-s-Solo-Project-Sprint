@@ -112,12 +112,25 @@ exports.theComment = (article_id, username, comment) => {
 };
 
 exports.deleteCommentById = (comment_id) => {
-  let query = ` 
-        DELETE FROM comments
-        WHERE comment_id = $1
+  let checkCommentId_query = ` 
+        SELECT comment_id FROM comments
+        WHERE comment_id = $1;
     `;
-
-  return db.query(query, [comment_id]).then((result) => {
-    return result.rows;
-  });
+  let delete_query = ` 
+        DELETE FROM comments
+        WHERE comment_id = $1;
+    `;
+  return db
+    .query(checkCommentId_query, [comment_id])
+    .then((result) => {
+      //if comment is a number and returns and empty array
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "id not found!" });
+      }
+    })
+    .then(() => {
+      return db.query(delete_query, [comment_id]).then((result) => {
+        return result.rows;
+      });
+    });
 };

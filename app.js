@@ -16,11 +16,17 @@ const {
   handleServerErrors,
 } = require("./errors/index");
 
+const endpointJSON = require("./endpoints.json");
+
 const app = express();
 
 app.use(express.json());
 
 //api requests
+app.get("/api", (req, res) => {
+  res.send(endpointJSON);
+});
+
 app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 app.get("/api/users", getUsers);
