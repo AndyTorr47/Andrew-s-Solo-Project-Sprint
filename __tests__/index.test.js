@@ -311,6 +311,8 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
+//GET /api
+
 describe("GET /api", () => {
   test(" endpoint JSON to return all the endpoints avaialable", () => {
     return request(app)

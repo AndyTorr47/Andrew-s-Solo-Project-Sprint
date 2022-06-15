@@ -1,11 +1,38 @@
-## Set-up Environment Variables
+## WELCOME T0 MY BACKEND PROJECT
 
-We'll have two databases in this project. One for real looking dev data and another for simpler test data.
+An API that serves endpoints for a front end that will mimic the functionality of news applications, such as Reddit!
 
-You will need to create two .env files for your project: .env.test and .env.development. Into each, add PGDATABASE=nc_news, with the correct database name for that environment (see /db/setup.sql for the database names). Double check that these .env files are .gitignored.
+## Overview
 
-## Husky
+As a part of my studies at Northcoders, I was tasked with building an API for the purpose of accessing application data programmatically. The intention is to mimic the building of a real world backend service, gaining practical insight into the required workflows that will be common in the workplace.
 
-To ensure we are not commiting broken code this project makes use of git hooks. Git hooks are scripts triggered during certain events in the git lifecycle. Husky is a popular package which allows us to set up and maintain these scripts. This project makes use a _pre-commit hook_. When we attempt to commit our work, the script defined in the `pre-commit` file will run. If any of our tests fail than the commit will be aborted.
+This API is hosted on Heroku, and can be viewed online using this URL - https://andrews-fe-project.herokuapp.com/
+Alternatively, if you would like to run the test suite locally, please follow the setup instructions.
 
-The [Husky documentation](https://typicode.github.io/husky/#/) explains how to configure Husky for your own project as well as creating your own custom hooks.\_
+## Setup
+
+What versions are needed: Node (version 16 or above), PostgreSQL (version 12 or above)
+
+After cloning the repo, first install the project's dependencies:
+
+npm install
+
+This repo contains 2 databases for test and dev data. In order to connect to the two databases, .env files must be created. In the root directory, create a .env.test file, and include the following:
+
+PGDATABASE=nc_news_test
+
+Next, create a .env.development file, and include the following:
+
+PGDATABASE=nc_news
+
+The jest test suite can now be run using npm test!
+
+Additionally, if you wanted to view the test database, you can run:
+
+npm run view-data
+
+Which will print the test data to a "testdata.txt" file.
+
+THATS ALL!
+
+THANK YOU FOR YOU TIME, AND ALWAYS NICE TO SEE YOU HERE :)
