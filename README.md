@@ -1,6 +1,6 @@
 ## WELCOME T0 MY BACKEND PROJECT
 
-An API that serves endpoints for a front end that will mimic the functionality of news applications, such as Reddit!
+# An API that serves endpoints for a front end that will mimic the functionality of news applications, such as Reddit!
 
 ## Overview
 
